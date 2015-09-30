@@ -4,5 +4,7 @@
     RewriteEngine On
     #RewriteBase /path/to/app
     RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteRule ^ index.php [L]
+    # @TODO switch dev|prod
+    # see http://stackoverflow.com/questions/22308743/environment-variable-value-as-rewritecond
+    RewriteRule ^ index_dev.php [L]
 </IfModule>

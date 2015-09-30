@@ -5,6 +5,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Constraints as Assert;
 
+// $app->match('/info', function () use ($app) {
+//     return new Response( phpinfo(), 200);
+// });
+
 $app->match('/', function () use ($app) {
     $app['session']->getFlashBag()->add('warning', 'Warning flash message');
     $app['session']->getFlashBag()->add('info', 'Info flash message');

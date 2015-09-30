@@ -11,9 +11,12 @@ use Silex\Provider\TwigServiceProvider;
 use Silex\Provider\UrlGeneratorServiceProvider;
 use Silex\Provider\ValidatorServiceProvider;
 use Silex\Provider\WebProfilerServiceProvider;
-use SilexAssetic\AsseticServiceProvider;
 use Symfony\Component\Security\Core\Encoder\PlaintextPasswordEncoder;
 use Symfony\Component\Translation\Loader\YamlFileLoader;
+# use Symfony\Component\Templating\Asset\PathPackage;
+
+# use AppBundle\Twig\AssetVersionExtension;
+
 
 $app->register(new HttpCacheServiceProvider());
 
@@ -21,6 +24,73 @@ $app->register(new SessionServiceProvider());
 $app->register(new ValidatorServiceProvider());
 $app->register(new FormServiceProvider());
 $app->register(new UrlGeneratorServiceProvider());
+
+$app->register(new Silex\Provider\HttpFragmentServiceProvider());
+
+# $app->register(new AppBundle\Twig\AssetVersionExtension());
+################################################################# CLEANUP!
+class AssetVersionExtension extends \Twig_Extension
+{
+    public function __construct()
+    {
+        $this->appDir = __DIR__ ;
+    }
+
+    public function getFilters()
+    {
+      return array(
+	        new \Twig_SimpleFilter('asset_version', array($this, 'getAssetVersion')),
+      );
+    }
+
+    public function getName()
+    {
+        return 'asset_version_extension';
+    }
+
+    /**
+     * Logic for the "asset" function of Twig
+     *
+     * @param type $url
+     * @param type $version
+     * @return type
+     */
+    public function asset($url)
+    {
+        // $versionToUse = $this->version;
+        // if($version !== NULL)
+        //     $versionToUse = $version;
+        //
+        # $assetPath = $this->directory.'/'.ltrim($url, '/');
+        // $assetPath.= $versionToUse !== NULL ? '?v='.$versionToUse : '';
+        return $url;
+    }
+
+    public function getFunctions()
+    {
+        return array(
+            'asset' => new \Twig_Function_Method($this, 'asset'),
+        );
+    }
+
+    public function getAssetVersion($filename)
+ 	  {
+          $manifestPath = $this->appDir.'/../resources/assets/rev-manifest.json';
+
+          if (!file_exists($manifestPath)) {
+              throw new \Exception(sprintf('Cannot find manifest file: "%s"', $manifestPath));
+          }
+
+          $paths = json_decode(file_get_contents($manifestPath), true);
+
+          if (!isset($paths[$filename])) {
+              throw new \Exception(sprintf('There is no file "%s" in the version manifest!', $filename));
+          }
+
+          return $paths[$filename];
+    }
+}
+################################################################# /CLEANUP!
 
 $app->register(new SecurityServiceProvider(), array(
     'security.firewalls' => array(
@@ -66,50 +136,18 @@ $app->register(new TwigServiceProvider(), array(
     'twig.path'           => array(__DIR__ . '/../resources/views')
 ));
 
+$app['twig'] = $app->share($app->extend('twig', function($twig, $app) {
+    $twig->addExtension(new AssetVersionExtension($app));
+
+    return $twig;
+}));
+
+
 if ($app['debug'] && isset($app['cache.path'])) {
     $app->register(new ServiceControllerServiceProvider());
     $app->register(new WebProfilerServiceProvider(), array(
         'profiler.cache_dir' => $app['cache.path'].'/profiler',
     ));
-}
-
-if (isset($app['assetic.enabled']) && $app['assetic.enabled']) {
-    $app->register(new AsseticServiceProvider(), array(
-        'assetic.options' => array(
-            'debug'            => $app['debug'],
-            'auto_dump_assets' => $app['debug'],
-        )
-    ));
-
-    $app['assetic.filter_manager'] = $app->share(
-        $app->extend('assetic.filter_manager', function ($fm, $app) {
-            $fm->set('lessphp', new Assetic\Filter\LessphpFilter());
-
-            return $fm;
-        })
-    );
-
-    $app['assetic.asset_manager'] = $app->share(
-        $app->extend('assetic.asset_manager', function ($am, $app) {
-            $am->set('styles', new Assetic\Asset\AssetCache(
-                new Assetic\Asset\GlobAsset(
-                    $app['assetic.input.path_to_css'],
-                    array($app['assetic.filter_manager']->get('lessphp'))
-                ),
-                new Assetic\Cache\FilesystemCache($app['assetic.path_to_cache'])
-            ));
-            $am->get('styles')->setTargetPath($app['assetic.output.path_to_css']);
-
-            $am->set('scripts', new Assetic\Asset\AssetCache(
-                new Assetic\Asset\GlobAsset($app['assetic.input.path_to_js']),
-                new Assetic\Cache\FilesystemCache($app['assetic.path_to_cache'])
-            ));
-            $am->get('scripts')->setTargetPath($app['assetic.output.path_to_js']);
-
-            return $am;
-        })
-    );
-
 }
 
 $app->register(new Silex\Provider\DoctrineServiceProvider());

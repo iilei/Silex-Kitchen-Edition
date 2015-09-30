@@ -9,27 +9,28 @@
         {
             "name"  : "Grégoire Pineau",
             "email" : "lyrixx@lyrixx.info"
+        },
+        {
+            "name"  : "Jochen Iilei Preusche",
+            "email" : "jp@jochenpreusche.de"
         }
     ],
     "require": {
-        "doctrine/dbal"         : "~2.3",
-        "kriswallsmith/assetic" : "~1.1",
-        "leafo/lessphp"         : "~0.4.0",
-        "mheap/silex-assetic"   : "~1.0",
-        "monolog/monolog"       : "~1.6",
-        "silex/silex"           : "~1.1",
-        "symfony/config"        : "~2.3",
-        "symfony/console"       : "~2.3",
-        "symfony/form"          : "~2.3",
-        "symfony/finder"        : "~2.2",
-        "symfony/security"      : "~2.3",
-        "symfony/translation"   : "~2.3",
-        "symfony/twig-bridge"   : "~2.3",
-        "symfony/validator"     : "~2.3",
-        "symfony/yaml"          : "~2.3",
-        "twig/twig"             : "~1.10",
-        "silex/web-profiler"    : "~1.0.1",
-        "twitter/bootstrap"     : "2.3.2"
+        "doctrine/dbal"         : "~2.5",
+        "monolog/monolog"       : "~1.17",
+        "silex/silex"           : "~1.3",
+        "symfony/config"        : "~2.7",
+        "symfony/console"       : "~2.7",
+        "symfony/form"          : "~2.7",
+        "symfony/finder"        : "~2.7",
+        "symfony/security"      : "~2.7",
+        "symfony/translation"   : "~2.7",
+        "symfony/twig-bridge"   : "~2.7",
+        "symfony/validator"     : "~2.7",
+        "symfony/yaml"          : "~2.7",
+        "twig/twig"             : "~1.22",
+        "silex/web-profiler"    : "1.0.7",
+        "twbs/bootstrap-sass"   : "3.3.5"
     },
     "require-dev": {
         "symfony/browser-kit"   : "~2.3",
