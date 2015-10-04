@@ -2,7 +2,7 @@
     Options -MultiViews
 
     RewriteEngine On
-    #RewriteBase /path/to/app
+    RewriteBase /
     RewriteCond %{REQUEST_FILENAME} !-f
     # @TODO switch dev|prod
     # see http://stackoverflow.com/questions/22308743/environment-variable-value-as-rewritecond

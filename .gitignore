@@ -5,3 +5,4 @@
 /web/assets/*
 /node_modules/
 /resources/assets/rev-manifest.json
+/bower_components
