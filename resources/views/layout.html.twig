@@ -16,6 +16,7 @@
 
 </head>
 <body>
+<!--[if lt IE 7]><p class=chromeframe>Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p><![endif]-->
     {% set active = active|default(null) %}
     <div class="navbar navbar-fixed-top">
         <div class="navbar-inner">
@@ -62,8 +63,7 @@
         </div>
     </div>
 
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script>window.jQuery || document.write('<script src="{{ app.request.basepath }}/assets/{{ asset('js/jquery.js'|asset_version) }}"><\/script>')</script>
-    <script src="{{ app.request.basepath }}/assets/{{ asset('js/application.js'|asset_version) }}"></script>
+    <script src="{{ app.request.basepath }}/{{ asset('js/vendor.js'|asset_version) }}"></script>
+    <script src="{{ app.request.basepath }}/{{ asset('js/application.js'|asset_version) }}"></script>
 </body>
 </html>

@@ -2,7 +2,13 @@
 /resources/cache/*
 /resources/log/*
 /vendor/
-/web/assets/*
+/web/img/*
+/web/js/*
+/web/css/*
 /node_modules/
 /resources/assets/rev-manifest.json
 /bower_components
+
+!/web/img/.gitkeep
+!/web/js/.gitkeep
+!/web/css/.gitkeep

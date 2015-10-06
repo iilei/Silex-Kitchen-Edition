@@ -12,24 +12,37 @@ let gulp      = require('gulp'),
     resources = {
       js: RES_DIR + '/js/**/*.js',
       js_modules: RES_DIR + '/js/**/*.module.js',
-      images: RES_DIR + '/img/*'
+      images: RES_DIR + '/img/*',
+      vendor_js: ['bower_components/jquery/dist/jquery.js']
     },
     destinations = {
-      js: 'web/assets/js',
-      images: 'web/assets/img',
-      styles: 'web/assets/styles'
+      js: 'web/js',
+      images: 'web/img',
+      styles: 'web/styles'
     };
 
 gulp.task('clean', function () {
     return del([
-      'web/assets/js/**/*.js',
-      'web/assets/js/**/*.js.map',
-      'web/assets/img/**/*',
+      'web/js/**/*.js',
+      'web/js/**/*.js.map',
+      'web/img/**/*.{png,jpeg,jpg,gif}',
       RES_DIR + '/rev-manifest.json'
     ]);
 });
 
 gulp.task('scripts', function(done) {
+  // jquery and other vendor stuff is more likely to be cached for long time spans, hence a single file
+  gulp.src(resources.vendor_js)
+      .pipe(sourcemaps.init())
+      .pipe(uglify())
+      .pipe(concat('js/vendor.js'))
+      .pipe(hash({template: "<%= name %>.<%= hash %>.min<%= ext %>"}))
+      .pipe(sourcemaps.write('.'))
+      .pipe(gulp.dest('web')) // Write the renamed files
+      .pipe(hash.manifest('rev-manifest.json', true)) // Switch to the manifest file
+      .pipe(gulp.dest(RES_DIR)); // Write the manifest file
+
+  // todo: clean code
   gulp.src([resources.js, '!'+resources.js_modules]) // modules are to be loades async
       .pipe(sourcemaps.init())
       .pipe(babel()) // include { optional: ['runtime'] } if generators are used
@@ -37,10 +50,9 @@ gulp.task('scripts', function(done) {
       .pipe(concat('js/application.js')) // concatenate all files into one
       .pipe(hash({template: "<%= name %>.<%= hash %>.min<%= ext %>"})) // Add hashes to the files' name(s)
       .pipe(sourcemaps.write('.'))
-      .pipe(gulp.dest('web/assets')) // Write the renamed files
+      .pipe(gulp.dest('web')) // Write the renamed files
       .pipe(hash.manifest('rev-manifest.json', true)) // Switch to the manifest file
       .pipe(gulp.dest(RES_DIR)); // Write the manifest file
-
   done();
 });
 
@@ -63,7 +75,7 @@ gulp.task('scripts', function(done) {
 gulp.task('images', function() {
   return gulp.src(resources.images)
     .pipe(imagemin({optimizationLevel: 5}))
-    .pipe(gulp.dest('web/assets/img'));
+    .pipe(gulp.dest('web/img'));
 });
 
 // Rerun the task when a file changes
