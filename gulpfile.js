@@ -9,23 +9,11 @@ let RES_DIR       = 'resources/assets',
     imagemin      = require('gulp-imagemin'),
     babel         = require('gulp-babel'),
     sourcemaps    = require('gulp-sourcemaps'),
+    minifyCss     = require('gulp-minify-css'),
     plumber       = require('gulp-plumber'),
     sass          = require('gulp-ruby-sass'),
     gulpFilter    = require('gulp-filter'),
-    // config        = require('./gulp/config'), // FIXME
-    config = {
-      sass: {
-        src:  'resources/assets/scss/**/*.{sass,scss}',
-        dest: 'web/css',
-        options: {
-          noCache: true,
-          compass: false,
-          bundleExec: false,
-          sourcemap: true,
-          style: 'expanded'
-        }
-      }
-    },
+    config        = require('./gulp/config'),
     resources = {
       js: RES_DIR + '/js/**/*.js',
       js_modules: RES_DIR + '/js/**/*.module.js',
@@ -44,7 +32,8 @@ gulp.task('clean', function () {
       'web/js/**/*.js.map',
       'web/img/**/*.{png,jpeg,jpg,gif}',
       RES_DIR + '/rev-manifest.json',
-      '.sass-cache/**/*'
+      '.sass-cache/**/*',
+      'web/css/**/*'
     ]);
 });
 
@@ -81,6 +70,7 @@ gulp.task('styles', function(done) {
     .on('error', sass.logError)
     .pipe(sourcemaps.init())
     .pipe(concat('css/style.css'))
+    .pipe(minifyCss({compatibility: 'ie8'}))
     .pipe(hash({template: "<%= name %>.<%= hash %>.min<%= ext %>"}))
     .pipe(gulp.dest('web'))
     .pipe(filter) // Don’t write sourcemaps of sourcemaps
