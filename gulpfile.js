@@ -1,14 +1,31 @@
 'use strict';
 
-let gulp      = require('gulp'),
-    hash      = require('gulp-hash'),
-    uglify    = require('gulp-uglify'),
-    concat    = require('gulp-concat'),
-    del       = require('del'),
-    imagemin  = require('gulp-imagemin'),
-    babel     = require('gulp-babel'),
-    sourcemaps = require('gulp-sourcemaps'),
-    RES_DIR = 'resources/assets',
+let RES_DIR       = 'resources/assets',
+    gulp          = require('gulp'),
+    hash          = require('gulp-hash'),
+    uglify        = require('gulp-uglify'),
+    concat        = require('gulp-concat'),
+    del           = require('del'),
+    imagemin      = require('gulp-imagemin'),
+    babel         = require('gulp-babel'),
+    sourcemaps    = require('gulp-sourcemaps'),
+    plumber       = require('gulp-plumber'),
+    sass          = require('gulp-ruby-sass'),
+    gulpFilter    = require('gulp-filter'),
+    // config        = require('./gulp/config'), // FIXME
+    config = {
+      sass: {
+        src:  'resources/assets/scss/**/*.{sass,scss}',
+        dest: 'web/css',
+        options: {
+          noCache: true,
+          compass: false,
+          bundleExec: false,
+          sourcemap: true,
+          style: 'expanded'
+        }
+      }
+    },
     resources = {
       js: RES_DIR + '/js/**/*.js',
       js_modules: RES_DIR + '/js/**/*.module.js',
@@ -56,20 +73,16 @@ gulp.task('scripts', function(done) {
   done();
 });
 
-//styles
-// gulp.task('styles', function() {
-// 	return gulp.src([RES_DIR])
-// 		.pipe(plumber(plumberErrorHandler))
-// 		.pipe(compass({
-// 			// css: 'html/css',
-// 			sass: '/sass/**/*.scss'
-// 			//, image: 'html/images'
-// 		}))
-// 		.pipe(gulp.dest('html/css'))
-// 		.pipe(rename({ suffix: '.min' }))
-// 		.pipe(minifycss())
-// 		.pipe(gulp.dest('html/css'));
-// });
+gulp.task('sass', function(done) {
+  return sass(config.sass.src, config.sass.options)
+    .on('error', sass.logError)
+    .pipe(hash({template: "<%= name %>.<%= hash %>.min<%= ext %>"}))
+    .pipe(hash.manifest('./../../resources/assets/rev-manifest.json', true)) // Switch to the manifest file
+    .pipe(gulp.dest(config.sass.dest))
+
+  done();
+});
+
 
 // Copy all static images
 gulp.task('images', function() {
