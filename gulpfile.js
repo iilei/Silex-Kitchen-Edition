@@ -18,7 +18,8 @@ let RES_DIR       = 'resources/assets',
       js: RES_DIR + '/js/**/*.js',
       js_modules: RES_DIR + '/js/**/*.module.js',
       images: RES_DIR + '/img/*',
-      vendor_js: ['bower_components/jquery/dist/jquery.js']
+      vendor_js: ['bower_components/jquery/dist/jquery.js',
+                  'bower_components/bootstrap-sass/assets/javascripts/bootstrap.js']
     },
     destinations = {
       js: 'web/js',
