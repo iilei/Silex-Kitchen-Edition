@@ -8,6 +8,7 @@
 /node_modules/
 /resources/assets/rev-manifest.json
 /bower_components
+/.sass-cache
 
 !/web/img/.gitkeep
 !/web/js/.gitkeep

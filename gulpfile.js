@@ -43,7 +43,8 @@ gulp.task('clean', function () {
       'web/js/**/*.js',
       'web/js/**/*.js.map',
       'web/img/**/*.{png,jpeg,jpg,gif}',
-      RES_DIR + '/rev-manifest.json'
+      RES_DIR + '/rev-manifest.json',
+      '.sass-cache/**/*'
     ]);
 });
 
@@ -54,7 +55,7 @@ gulp.task('scripts', function(done) {
       .pipe(uglify())
       .pipe(concat('js/vendor.js'))
       .pipe(hash({template: "<%= name %>.<%= hash %>.min<%= ext %>"}))
-      .pipe(sourcemaps.write('.'))
+      .pipe(sourcemaps.write('.'), {sourceRoot: RES_DIR})
       .pipe(gulp.dest('web')) // Write the renamed files
       .pipe(hash.manifest('rev-manifest.json', true)) // Switch to the manifest file
       .pipe(gulp.dest(RES_DIR)); // Write the manifest file
@@ -66,23 +67,28 @@ gulp.task('scripts', function(done) {
       .pipe(uglify())
       .pipe(concat('js/application.js')) // concatenate all files into one
       .pipe(hash({template: "<%= name %>.<%= hash %>.min<%= ext %>"})) // Add hashes to the files' name(s)
-      .pipe(sourcemaps.write('.'))
+      .pipe(sourcemaps.write('.', {sourceRoot: RES_DIR}))
       .pipe(gulp.dest('web')) // Write the renamed files
       .pipe(hash.manifest('rev-manifest.json', true)) // Switch to the manifest file
       .pipe(gulp.dest(RES_DIR)); // Write the manifest file
   done();
 });
 
-gulp.task('sass', function(done) {
+gulp.task('styles', function(done) {
+  let filter = gulpFilter(['*.css', '!*.map'], {restore: true});
+
   return sass(config.sass.src, config.sass.options)
     .on('error', sass.logError)
+    .pipe(sourcemaps.init())
+    .pipe(concat('css/style.css'))
     .pipe(hash({template: "<%= name %>.<%= hash %>.min<%= ext %>"}))
-    .pipe(hash.manifest('./../../resources/assets/rev-manifest.json', true)) // Switch to the manifest file
-    .pipe(gulp.dest(config.sass.dest))
-
-  done();
+    .pipe(gulp.dest('web'))
+    .pipe(filter) // Don’t write sourcemaps of sourcemaps
+    .pipe(sourcemaps.write('.', { includeContent: false, addComment: true, sourceRoot: RES_DIR }))
+    .pipe(filter.restore) // Restore original files
+    .pipe(hash.manifest('rev-manifest.json', true)) // Switch to the manifest file
+    .pipe(gulp.dest(RES_DIR));
 });
-
 
 // Copy all static images
 gulp.task('images', function() {
@@ -99,7 +105,7 @@ gulp.task('images', function() {
 
 gulp.task('default',
   gulp.series('clean',
-    gulp.parallel('scripts', /* 'styles', */ 'images'),
+    gulp.parallel('scripts', 'styles', 'images'),
     function (done) {
       done();
     }
