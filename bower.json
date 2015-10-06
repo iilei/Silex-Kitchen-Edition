@@ -19,6 +19,8 @@
     "jquery": "~2.1.4"
   },
   "devDependencies": {
-    "jquery": "~2.1.4"
+    "jquery": "~2.1.4",
+    "modernizr": "~3.1.0",
+    "bootstrap-sass": "bootstrap-sass-official#~3.3.5"
   }
 }
