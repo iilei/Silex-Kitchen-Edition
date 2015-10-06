@@ -15,3 +15,5 @@ prereqisites
 
     gem update --system
     gem install compass
+    npm install -g bower
+    npm install "gulpjs/gulp#4.0" 

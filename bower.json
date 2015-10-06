@@ -1,0 +1,24 @@
+{
+  "name": "vendor_js_dependencies",
+  "version": "1.3.0",
+  "homepage": "https://github.com/iilei/Silex-Kitchen-Edition",
+  "authors": [
+    "iilei <jp@jochenpreusche.de>"
+  ],
+  "description": "holds dependencies which are reffered by gulpfile",
+  "main": "",
+  "moduleType": [],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.4"
+  },
+  "devDependencies": {
+    "jquery": "~2.1.4"
+  }
+}
